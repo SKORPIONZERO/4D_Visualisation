@@ -47,9 +47,9 @@ def calculate_vertices(centre, cube_width, line_vectors, theta):
         current_vertex_x = centre + [-350, 0, 0] + (Rx @ Ry @ line_vectors[k]) * (cube_width//2)
         current_vertex_y = centre + (Ry @ Rz @ line_vectors[k]) * (cube_width//2)
         current_vertex_z = centre + [350, 0, 0] + (Rz @ Rx @ Ry @ line_vectors[k]) * (cube_width//2)
-        current_verticesx.append(current_vertex_x)
-        current_verticesy.append(current_vertex_y)
-        current_verticesz.append(current_vertex_z)
+        current_verticesx.append(current_vertex_x[:2])
+        current_verticesy.append(current_vertex_y[:2])
+        current_verticesz.append(current_vertex_z[:2])
     return np.array(current_verticesx), np.array(current_verticesy), np.array(current_verticesz)
 
 def calulate_edges(line_vectors):
@@ -89,24 +89,21 @@ def main():
                 if event.key == pygame.K_SPACE:
                     theta_changing = not theta_changing
 
-        current_verticesx, current_verticesy, current_verticesz = calculate_vertices(centre, cube_width, line_vectors, theta)
+        current_verticesx, current_verticesy, current_verticesz = calculate_vertices(
+            centre, cube_width, line_vectors, theta
+            )
         edges = calulate_edges(line_vectors)
         
         # Drawing the vertices and the edges for each rotation axis using only the x and y coordinates for display
-        current_verticesx = np.array([i[:2] for i in current_verticesx])
         for i in current_verticesx:
             pygame.draw.circle(screen, ORANGE, [int(i[0]), int(i[1])], 5)
-        for j in edges:
-            pygame.draw.line(screen, NEON_BLUE, current_verticesx[j[0]], current_verticesx[j[1]], 3)
-        current_verticesy = np.array([i[:2] for i in current_verticesy])
         for i in current_verticesy:
             pygame.draw.circle(screen, BLUE, [int(i[0]), int(i[1])], 5)
-        for j in edges:
-            pygame.draw.line(screen, ORANGE, current_verticesy[j[0]], current_verticesy[j[1]], 3)
-        current_verticesz = np.array([i[:2] for i in current_verticesz])
         for i in current_verticesz:
             pygame.draw.circle(screen, GREEN, [int(i[0]), int(i[1])], 5)
         for j in edges:
+            pygame.draw.line(screen, NEON_BLUE, current_verticesx[j[0]], current_verticesx[j[1]], 3)
+            pygame.draw.line(screen, ORANGE, current_verticesy[j[0]], current_verticesy[j[1]], 3)
             pygame.draw.line(screen, WHITE, current_verticesz[j[0]], current_verticesz[j[1]], 3)
         clock.tick(60)
         if theta_changing:

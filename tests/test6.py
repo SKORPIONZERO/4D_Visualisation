@@ -14,7 +14,7 @@ GREEN = (0, 255, 0)
 def setup():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("3D Cube Rotation Test (single axis at a time) - Orthographic Projection")
+    pygame.display.set_caption("3D Cube Rotation Test (multiple axes at a time) - Perspective Projection")
     clock = pygame.time.Clock()
     return screen, clock
 
@@ -43,13 +43,23 @@ def calculate_vertices(centre, cube_width, line_vectors, theta):
     current_verticesy = []
     current_verticesz = []
     Rx, Ry, Rz = define_rotation_matrices(theta)
+    distance = 3.0
     for k in range(len(line_vectors)):
-        current_vertex_x = centre + [-350, 0, 0] + (Rx @ line_vectors[k]) * (cube_width//2)
-        current_vertex_y = centre + (Ry @ line_vectors[k]) * (cube_width//2)
-        current_vertex_z = centre + [350, 0, 0] + (Rz @ line_vectors[k]) * (cube_width//2)
-        current_verticesx.append(current_vertex_x[:2])
-        current_verticesy.append(current_vertex_y[:2])
-        current_verticesz.append(current_vertex_z[:2])
+        # Cube X
+        rotated_vertex_x = Rx @ Ry @ line_vectors[k]
+        factor = distance / (distance - rotated_vertex_x[2])
+        current_vertex_x = centre + [-350, 0, 0] + rotated_vertex_x * (cube_width//2) * factor
+        current_verticesx.append(current_vertex_x)
+        # Cube Y
+        rotated_vertex_y = Ry @ Rz @ line_vectors[k]
+        factor = distance / (distance - rotated_vertex_y[2])
+        current_vertex_y = centre + [0, 0, 0] + rotated_vertex_y * (cube_width//2) * factor
+        current_verticesy.append(current_vertex_y)
+        # Cube Z
+        rotated_vertex_z = Rz @ Rx @ Ry @ line_vectors[k]
+        factor = distance / (distance - rotated_vertex_z[2])
+        current_vertex_z = centre + [350, 0, 0] + rotated_vertex_z * (cube_width//2) * factor
+        current_verticesz.append(current_vertex_z)
     return np.array(current_verticesx), np.array(current_verticesy), np.array(current_verticesz)
 
 def calulate_edges(line_vectors):
@@ -71,7 +81,7 @@ def main():
     screen, clock = setup()
     running = True
     centre=pygame.Vector3([screen.get_width() / 2, screen.get_height() / 2, 0])
-    cube_width = 200
+    cube_width = 150
     edges = 12
     theta=0
     line_vectors=[]
@@ -102,9 +112,9 @@ def main():
         for i in current_verticesz:
             pygame.draw.circle(screen, GREEN, [int(i[0]), int(i[1])], 5)
         for j in edges:
-            pygame.draw.line(screen, NEON_BLUE, current_verticesx[j[0]], current_verticesx[j[1]], 3)
-            pygame.draw.line(screen, ORANGE, current_verticesy[j[0]], current_verticesy[j[1]], 3)
-            pygame.draw.line(screen, WHITE, current_verticesz[j[0]], current_verticesz[j[1]], 3)
+            pygame.draw.line(screen, NEON_BLUE, current_verticesx[j[0]][:2], current_verticesx[j[1]][:2], 3)
+            pygame.draw.line(screen, ORANGE, current_verticesy[j[0]][:2], current_verticesy[j[1]][:2], 3)
+            pygame.draw.line(screen, WHITE, current_verticesz[j[0]][:2], current_verticesz[j[1]][:2], 3)
         clock.tick(60)
         if theta_changing:
             theta = (theta + 0.01) % (2 * math.pi)

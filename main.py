@@ -105,17 +105,17 @@ while running:
 
         # Step B: 4D to 3D Perspective Projection
         # Distance of the 4D "camera" from the W axis
-        distance_4d = 2.0 
+        distance_4d = 4.0 
         # Avoid division by zero if an object approaches the camera closely
-        factor_4d = 1.0 / (distance_4d - w) if (distance_4d - w) != 0 else 1.0
+        factor_4d = distance_4d / (distance_4d - w) if (distance_4d - w) != 0 else 1.0
         
         x3d = x * factor_4d
         y3d = y * factor_4d
         z3d = z * factor_4d
 
         # Step C: 3D to 2D Perspective Projection
-        distance_3d = 2.0
-        factor_3d = 1.0 / (distance_3d - z3d) if (distance_3d - z3d) != 0 else 1.0
+        distance_3d = 4.0
+        factor_3d = distance_3d / (distance_3d - z3d) if (distance_3d - z3d) != 0 else 1.0
         
         x2d = x3d * factor_3d
         y2d = y3d * factor_3d
