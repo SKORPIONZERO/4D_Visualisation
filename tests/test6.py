@@ -82,14 +82,13 @@ def main():
     running = True
     centre=pygame.Vector3([screen.get_width() / 2, screen.get_height() / 2, 0])
     cube_width = 150
-    edges = 12
     theta=0
+    theta_changing = False
     line_vectors=[]
     for x in [-1, 1]:
         for y in [-1, 1]:
             for z in [-1, 1]:
                 line_vectors.append([x, y, z])
-    theta_changing = False
     while running:
         screen.fill(BACKGROUND)
         for event in pygame.event.get():
