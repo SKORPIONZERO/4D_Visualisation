@@ -45,17 +45,17 @@ def calculate_vertices(centre, cube_width, line_vectors, theta):
     Rx, Ry, Rz = define_rotation_matrices(theta)
     distance = 3.0
     for k in range(len(line_vectors)):
-        # Cube X
+        # Cube 1
         rotated_vertex_1 = Rx @ Ry @ line_vectors[k]
         factor = distance / (distance - rotated_vertex_1[2])
         current_vertex_1 = centre + [-350, 0, 0] + rotated_vertex_1 * (cube_width//2) * factor
         current_vertices1.append(current_vertex_1)
-        # Cube Y
+        # Cube 2
         rotated_vertex_2 = Ry @ Rz @ line_vectors[k]
         factor = distance / (distance - rotated_vertex_2[2])
         current_vertex_2 = centre + [0, 0, 0] + rotated_vertex_2 * (cube_width//2) * factor
         current_vertices2.append(current_vertex_2)
-        # Cube Z
+        # Cube 3
         rotated_vertex_3 = Rz @ Rx @ Ry @ line_vectors[k]
         factor = distance / (distance - rotated_vertex_3[2])
         current_vertex_3 = centre + [350, 0, 0] + rotated_vertex_3 * (cube_width//2) * factor
