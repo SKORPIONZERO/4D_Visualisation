@@ -14,7 +14,7 @@ GREEN = (0, 255, 0)
 def setup():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("4D Tesseract Rotation Test - Orthographic Projection")
+    pygame.display.set_caption("4D Tesseract Rotation Test - Perspective Projection")
     clock = pygame.time.Clock()
     return screen, clock
 
