@@ -63,8 +63,8 @@ def calculate_vertices(centre, cube_width, line_vectors, theta):
     """Calculates the current vertices for each rotation axis."""
     current_vertices = []
     Rxy, Rxz, Rxw, Ryz, Ryw, Rzw = define_rotation_matrices(theta)
-    distance_4D = 2.5
-    distance_3D = 3.0
+    distance_4D = 3.0
+    distance_3D = 4.0
     for k in range(len(line_vectors)):
         # Apply all rotation matrices in sequence
         rotated_vertex = Rxy @ Rxz @ Rxw @ Ryz @ Ryw @ Rzw @ line_vectors[k]
@@ -73,9 +73,9 @@ def calculate_vertices(centre, cube_width, line_vectors, theta):
         x, y, z = x * factor_4d, y * factor_4d, z * factor_4d  # Apply 4D perspective projection
         factor_3d = distance_3D/(distance_3D-z)
         x, y = x * factor_3d, y * factor_3d  # Apply 3D perspective projection
-        current_vertex = centre + [x, y] * (cube_width // 2)
+        current_vertex = centre + np.array([x, y]) * (cube_width // 2)
         current_vertices.append(current_vertex)
-    return np.array(current_vertices)
+    return current_vertices
 
 def calulate_edges(line_vectors):
     '''Defines edges based on the original line_vectors (not the rotated ones),
@@ -96,7 +96,7 @@ def main():
     screen, clock = setup()
     running = True
     centre = [screen.get_width() / 2, screen.get_height() / 2]
-    cube_width = 2000
+    cube_width = 200
     theta = 0
     theta_changing = False
     line_vectors=[]
@@ -118,7 +118,7 @@ def main():
         for vertex in current_vertices:
             pygame.draw.circle(screen, NEON_BLUE, (int(vertex[0]), int(vertex[1])), 5)
         for edge in edges:
-            pygame.draw.line(screen, WHITE, current_vertices[edge[0]][:2], current_vertices[edge[1]][:2], 3)
+            pygame.draw.line(screen, WHITE, current_vertices[edge[0]], current_vertices[edge[1]], 3)
         clock.tick(60)
         if theta_changing:
             theta = (theta + 0.01) % (2 * math.pi)
