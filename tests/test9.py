@@ -130,6 +130,27 @@ def lerp_colours(values,max_value, min_value=None, mode='rgb'):
             colours.append(lerp_colours_hsv(v, max_value, min_value))
     return colours
 
+def display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin):
+    for vertex in range(len(current_vertices)):
+            pygame.draw.circle(screen, colours[vertex], (int(current_vertices[vertex][0]), int(current_vertices[vertex][1])), 10)
+    for edge in range(len(edges)):
+        start_pos = current_vertices[edges[edge][0]]
+        for i in range(number_of_line_segments + 1):
+            t = i / number_of_line_segments
+            coordinates_t = current_vertices[edges[edge][0]] + t * (current_vertices[edges[edge][1]] - current_vertices[edges[edge][0]])
+            colours_t = lerp_colours_hsv(w_values[edges[edge][0]] + t * (w_values[edges[edge][1]] - w_values[edges[edge][0]]), max_distance_from_origin)
+            pygame.draw.line(screen, colours_t, start_pos, coordinates_t, 3)
+        start_pos = coordinates_t    
+
+def create_line_vectors(unit_distance):
+    line_vectors=[]
+    for x in [-unit_distance, unit_distance]:
+        for y in [-unit_distance, unit_distance]:
+            for z in [-unit_distance, unit_distance]:
+                for w in [-unit_distance, unit_distance]:
+                    line_vectors.append([x, y, z, w])
+    return line_vectors
+
 def main():
     screen, clock = setup()
     running = True
@@ -138,15 +159,10 @@ def main():
     dimensions = 4
     unit_distance = 1
     number_of_line_segments = 20
-    max_distance_from_origin = math.sqrt(dimensions) * unit_distance
     theta = 0
     theta_changing = False
-    line_vectors=[]
-    for x in [-unit_distance, unit_distance]:
-        for y in [-unit_distance, unit_distance]:
-            for z in [-unit_distance, unit_distance]:
-                for w in [-unit_distance, unit_distance]:
-                    line_vectors.append([x, y, z, w])
+    max_distance_from_origin = math.sqrt(dimensions) * unit_distance
+    line_vectors = create_line_vectors(unit_distance)
     while running:
         screen.fill(BACKGROUND)
         for event in pygame.event.get():
@@ -158,18 +174,7 @@ def main():
         current_vertices, w_values = calculate_vertices(centre, cube_width, line_vectors, theta)
         edges = calulate_edges(line_vectors)
         colours = lerp_colours(w_values, max_distance_from_origin, mode='hsv')
-        for vertex in range(len(current_vertices)):
-            pygame.draw.circle(screen, colours[vertex], (int(current_vertices[vertex][0]), int(current_vertices[vertex][1])), 10)
-        for edge in range(len(edges)):
-            start_pos = current_vertices[edges[edge][0]]
-            start_colour = colours[edges[edge][0]]
-            for i in range(number_of_line_segments + 1):
-                t = i / number_of_line_segments
-                coordinates_t = current_vertices[edges[edge][0]] + t * (current_vertices[edges[edge][1]] - current_vertices[edges[edge][0]])
-                colours_t = lerp_colours_hsv(w_values[edges[edge][0]] + t * (w_values[edges[edge][1]] - w_values[edges[edge][0]]), max_distance_from_origin)
-                pygame.draw.line(screen, colours_t, start_pos, coordinates_t, 3)
-                start_pos = coordinates_t
-                start_colour = colours_t
+        display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin) 
         clock.tick(60)
         if theta_changing:
             theta = (theta + 0.01) % (2 * math.pi)
