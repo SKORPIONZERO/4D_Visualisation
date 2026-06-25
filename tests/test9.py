@@ -15,8 +15,9 @@ def setup():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("4D Tesseract Rotation Test - Perspective Projection")
+    font = pygame.font.SysFont("Arial", 24)
     clock = pygame.time.Clock()
-    return screen, clock
+    return screen, clock, font
 
 def define_rotation_matrices(theta):
     """Defines rotation matrices for all 6 coordinate planes in 4D (XY, XZ, XW, YZ, YW, ZW)."""
@@ -132,7 +133,7 @@ def lerp_colours(values,max_value, min_value=None, mode='rgb'):
 
 def display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin):
     for vertex in range(len(current_vertices)):
-            pygame.draw.circle(screen, colours[vertex], (int(current_vertices[vertex][0]), int(current_vertices[vertex][1])), 10)
+            pygame.draw.circle(screen, colours[vertex], (int(current_vertices[vertex][0]), int(current_vertices[vertex][1])), 5)
     for edge in range(len(edges)):
         start_pos = current_vertices[edges[edge][0]]
         for i in range(number_of_line_segments + 1):
@@ -151,8 +152,13 @@ def create_line_vectors(unit_distance):
                     line_vectors.append([x, y, z, w])
     return line_vectors
 
+def draw_text(screen, font, w_values, current_vertices):
+    for i, vertex in enumerate(current_vertices):
+        text = font.render(f"{w_values[i]:.2f}", True, (255, 255, 255))
+        screen.blit(text, (int(vertex[0]), int(vertex[1])))
+
 def main():
-    screen, clock = setup()
+    screen, clock, font = setup()
     running = True
     centre = [screen.get_width() / 2, screen.get_height() / 2]
     cube_width = 200
@@ -161,6 +167,7 @@ def main():
     number_of_line_segments = 20
     theta = 0
     theta_changing = False
+    w_values_shown = True
     max_distance_from_origin = math.sqrt(dimensions) * unit_distance
     line_vectors = create_line_vectors(unit_distance)
     while running:
@@ -171,10 +178,14 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     theta_changing = not theta_changing
+                if event.key == pygame.K_t:
+                    w_values_shown = not w_values_shown
         current_vertices, w_values = calculate_vertices(centre, cube_width, line_vectors, theta)
         edges = calulate_edges(line_vectors)
         colours = lerp_colours(w_values, max_distance_from_origin, mode='hsv')
         display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin) 
+        if w_values_shown:
+            draw_text(screen, font, w_values, current_vertices)
         clock.tick(60)
         if theta_changing:
             theta = (theta + 0.01) % (2 * math.pi)
