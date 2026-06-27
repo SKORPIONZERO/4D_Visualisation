@@ -60,7 +60,7 @@ def define_rotation_matrices(theta):
     ])
     return Rxy, Rxz, Rxw, Ryz, Ryw, Rzw
 
-def calculate_vertices(centre, cube_width, line_vectors, theta):
+def calculate_vertices(centre, object_scale, line_vectors, theta):
     """Calculates the current vertices for each rotation axis."""
     current_vertices = []
     w_values = []
@@ -75,24 +75,19 @@ def calculate_vertices(centre, cube_width, line_vectors, theta):
         x, y, z = x * factor_4d, y * factor_4d, z * factor_4d  # Apply 4D perspective projection
         factor_3d = distance_3D/(distance_3D-z)
         x, y = x * factor_3d, y * factor_3d  # Apply 3D perspective projection
-        current_vertex = centre + np.array([x, y]) * (cube_width // 2)
+        current_vertex = centre + np.array([x, y]) * (object_scale // 2)
         current_vertices.append(current_vertex)
         w_values.append(w)
     return current_vertices, w_values
 
 def calculate_edges(line_vectors):
-    '''Defines edges based on the original line_vectors (not the rotated ones),
-    since the connectivity doesn't change with rotation.'''
-    # Two vertices share an edge if they differ by exactly one coordinate.
+    # Two vertices share an edge if they are not antipodal (opposite) vertices. 
     edges = []
     for i in range(len(line_vectors)):
         for j in range(i + 1, len(line_vectors)):
-            differences = 0
-            for m in range(4):
-                if line_vectors[i][m] != line_vectors[j][m]:
-                    differences += 1
-            if differences == 1:
+            if line_vectors[i] != [-l for l in line_vectors[j]]:
                 edges.append((i, j))
+    print(len(edges))  # Debugging statement
     return np.array(edges)
 
 def lerp_colours_rgb(value, max_value, min_value=None):
@@ -143,13 +138,14 @@ def display_shape(screen, current_vertices, w_values, edges, colours, number_of_
             pygame.draw.line(screen, colours_t, start_pos, coordinates_t, 3)
             start_pos = coordinates_t
 
-def create_line_vectors(unit_distance):
-    line_vectors=[]
-    for x in [-unit_distance, unit_distance]:
-        for y in [-unit_distance, unit_distance]:
-            for z in [-unit_distance, unit_distance]:
-                for w in [-unit_distance, unit_distance]:
-                    line_vectors.append([x, y, z, w])
+def calculate_line_vectors(unit_distance = 1):
+    # Define the 8 vertices of a 16-cell in 4D space.
+    line_vectors = []
+    for axis in range(4):
+        for sign in [-unit_distance, unit_distance]:
+            vector = [0, 0, 0, 0]
+            vector[axis] = sign
+            line_vectors.append(vector)
     return line_vectors
 
 def draw_text(screen, font, w_values, current_vertices):
@@ -161,15 +157,16 @@ def main():
     screen, clock, font = setup()
     running = True
     centre = [screen.get_width() / 2, screen.get_height() / 2]
-    cube_width = 200
+    object_scale = 400
     dimensions = 4
     unit_distance = 1
     number_of_line_segments = 20
     theta = 0
     theta_changing = False
     w_values_shown = True
-    max_distance_from_origin = math.sqrt(dimensions) * unit_distance
-    line_vectors = create_line_vectors(unit_distance)
+    # max_distance_from_origin = math.sqrt(dimensions) * unit_distance
+    max_distance_from_origin = unit_distance
+    line_vectors = calculate_line_vectors(unit_distance)
     edges = calculate_edges(line_vectors)
     while running:
         screen.fill(BACKGROUND)
@@ -181,7 +178,7 @@ def main():
                     theta_changing = not theta_changing
                 if event.key == pygame.K_t:
                     w_values_shown = not w_values_shown
-        current_vertices, w_values = calculate_vertices(centre, cube_width, line_vectors, theta)
+        current_vertices, w_values = calculate_vertices(centre, object_scale, line_vectors, theta)
         colours = lerp_colours(w_values, max_distance_from_origin, mode='hsv')
         display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin) 
         if w_values_shown:
