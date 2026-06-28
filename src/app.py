@@ -20,7 +20,7 @@ class App:
         
         self.running = True
         self.theta = 0.0
-        self.theta_changing = False
+        self.auto_rotate = False
         self.w_values_enabled = True
         self.rotation_speed = ROTATION_SPEED
         
@@ -33,13 +33,13 @@ class App:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.theta_changing = not self.theta_changing
+                    self.auto_rotate = not self.auto_rotate
                 elif event.key == pygame.K_t:
                     self.w_values_enabled = not self.w_values_enabled
                 # TODO: Add more event handling as needed (e.g., for rotation speed adjustment, changing objects)
     
     def update(self):
-        if self.theta_changing:
+        if self.auto_rotate:
             self.theta = (self.theta + self.rotation_speed) % (2 * math.pi)
         # TODO: Add logic for calculating vertices, edges, and colors based on the current theta and other parameters.
     
