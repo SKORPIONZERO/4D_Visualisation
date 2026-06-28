@@ -7,6 +7,7 @@ currently playing, whether w-values are shown) as instance attributes
 """
 import pygame
 import math
+import polytopes
 from config import WIDTH, HEIGHT, FPS, ROTATION_SPEED, BACKGROUND
 
 class App:
@@ -24,7 +25,7 @@ class App:
         self.rotation_speed = ROTATION_SPEED
         
         # TODO: Initialize other necessary attributes for the 4D object, vertices, edges, and colors.
-        self.polytope = None  # Placeholder for the 4D object (e.g., tesseract)
+        self.polytope = polytopes.Tesseract()
     
     def handle_events(self):
         for event in pygame.event.get():
