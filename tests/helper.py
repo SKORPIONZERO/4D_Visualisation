@@ -3,47 +3,6 @@ import math
 import numpy as np
 import colorsys
 
-def define_rotation_matrices(theta):
-    """Defines rotation matrices for all 6 coordinate planes in 4D (XY, XZ, XW, YZ, YW, ZW)."""
-    c, s = math.cos(theta), math.sin(theta)
-    Rxy = np.array([
-        [c, -s, 0, 0],
-        [s,  c, 0, 0],
-        [0,  0, 1, 0],
-        [0,  0, 0, 1]
-    ])
-    Rxz = np.array([
-        [c, 0, -s, 0],
-        [0, 1,  0, 0],
-        [s, 0,  c, 0],
-        [0, 0,  0, 1]
-    ])
-    Rxw = np.array([
-        [c, 0, 0, -s],
-        [0, 1, 0,  0],
-        [0, 0, 1,  0],
-        [s, 0, 0,  c]
-    ])
-    Ryz = np.array([
-        [1, 0,  0, 0],
-        [0, c, -s, 0],
-        [0, s,  c, 0],
-        [0, 0,  0, 1]
-    ])
-    Ryw = np.array([
-        [1, 0, 0,  0],
-        [0, c, 0, -s],
-        [0, 0, 1,  0],
-        [0, s, 0,  c]
-    ])
-    Rzw = np.array([
-        [1, 0, 0,  0],
-        [0, 1, 0,  0],
-        [0, 0, c, -s],
-        [0, 0, s,  c]
-    ])
-    return Rxy, Rxz, Rxw, Ryz, Ryw, Rzw
-
 def calculate_vertices(centre, object_scale, line_vectors, theta):
     """Calculates the current vertices for each rotation axis."""
     current_vertices = []
@@ -63,16 +22,6 @@ def calculate_vertices(centre, object_scale, line_vectors, theta):
         current_vertices.append(current_vertex)
         w_values.append(w)
     return current_vertices, w_values
-
-def calculate_edges(line_vectors):
-    # Two vertices share an edge if they are not antipodal (opposite) vertices. 
-    edges = []
-    for i in range(len(line_vectors)):
-        for j in range(i + 1, len(line_vectors)):
-            if line_vectors[i] != [-l for l in line_vectors[j]]:
-                edges.append((i, j))
-    print(len(edges))  # Debugging statement
-    return np.array(edges)
 
 def lerp_colours_rgb(value, max_value, min_value=None):
     R1, G1, B1 = BLUE
@@ -121,16 +70,6 @@ def display_shape(screen, current_vertices, w_values, edges, colours, number_of_
             colours_t = lerp_colours_hsv(w_values[edges[edge][0]] + t * (w_values[edges[edge][1]] - w_values[edges[edge][0]]), max_distance_from_origin)
             pygame.draw.line(screen, colours_t, start_pos, coordinates_t, 3)
             start_pos = coordinates_t
-
-def calculate_line_vectors(unit_distance = 1):
-    # Define the 8 vertices of a 16-cell in 4D space.
-    line_vectors = []
-    for axis in range(4):
-        for sign in [-unit_distance, unit_distance]:
-            vector = [0, 0, 0, 0]
-            vector[axis] = sign
-            line_vectors.append(vector)
-    return line_vectors
 
 def draw_text(screen, font, w_values, current_vertices):
     for i, vertex in enumerate(current_vertices):

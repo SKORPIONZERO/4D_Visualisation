@@ -46,18 +46,3 @@ def define_rotation_matrices(theta):
         [0, 0, s,  c]
     ])
     return Rxy, Rxz, Rxw, Ryz, Ryw, Rzw
-
-def rotate_vertex(vertex, theta):
-    """Rotates a single vertex in 4D space using the defined rotation matrices."""
-    Rxy, Rxz, Rxw, Ryz, Ryw, Rzw = define_rotation_matrices(theta)
-    rotated_vertex = Rxw @ Rxy @ Rxz @ Ryw @ Ryz @ Rzw @ vertex
-    return rotated_vertex
-
-def rotate_vertices(vertices, theta):
-    """Rotates a list of vertices in 4D space using the defined rotation matrices."""
-    Rxy, Rxz, Rxw, Ryz, Ryw, Rzw = define_rotation_matrices(theta)
-    rotated_vertices = []
-    for vertex in vertices:
-        rotated_vertex = Rxw @ Rxy @ Rxz @ Ryw @ Ryz @ Rzw @ vertex
-        rotated_vertices.append(rotated_vertex)
-    return np.array(rotated_vertices)
