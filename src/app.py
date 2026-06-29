@@ -20,10 +20,12 @@ class App:
         
         self.running = True
         self.w_values_enabled = True
-        self.rotation_speed = config.ROTATION_SPEED
+        self.rotation_speed = config.BASE_ROTATION_SPEED
         
+        self.order_rotation_applied = config.PLANES
         self.angles = {plane: 0.0 for plane in config.PLANES}
         self.auto_rotation = {plane: False for plane in config.PLANES}
+        self.rotation_speeds = {plane: self.rotation_speed for plane in config.PLANES}
         self.chosen_plane = config.PLANES[0]
 
         self.polytope = polytopes.Tesseract()
@@ -34,17 +36,18 @@ class App:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.auto_rotation = {plane: not self.auto_rotation[plane] for plane in config.PLANES}
+                    self.auto_rotation[self.chosen_plane] = not self.auto_rotation[self.chosen_plane]
                 if event.key == pygame.K_t:
                     self.w_values_enabled = not self.w_values_enabled
-                for key, plane in config.PLANE_KEYS:
+                for key, plane in config.PLANE_KEYS.items():
                     if event.key == key:
-                        self.auto_rotation[plane] = not self.auto_rotation[plane]
+                        self.chosen_plane = plane
                 # TODO: Add more event handling as needed (e.g., for rotation speed adjustment, changing objects)
     
     def update(self):
-        if self.auto_rotate:
-            self.theta = (self.theta + self.rotation_speed) % (2 * math.pi)
+        for plane in config.PLANES:
+            if self.auto_rotation[plane]:
+                self.angles[plane] = (self.angles[plane] + self.rotation_speed) % (2 * math.pi)
         # TODO: Add logic for calculating vertices, edges, and colors based on the current theta and other parameters.
     
     def render(self):
