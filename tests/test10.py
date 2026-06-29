@@ -2,7 +2,6 @@ import pygame
 import math
 import numpy as np
 import colorsys
-
 WIDTH, HEIGHT = 1200, 800
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

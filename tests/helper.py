@@ -1,5 +1,4 @@
 import pygame
-import math
 import numpy as np
 import colorsys
 
@@ -79,7 +78,6 @@ def draw_text(screen, font, w_values, current_vertices):
 def main():
     centre = [screen.get_width() / 2, screen.get_height() / 2]
     object_scale = 400
-    dimensions = 4
     unit_distance = 1
     number_of_line_segments = 20
     # max_distance_from_origin = math.sqrt(dimensions) * unit_distance

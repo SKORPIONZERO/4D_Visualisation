@@ -8,23 +8,24 @@ currently playing, whether w-values are shown) as instance attributes
 import pygame
 import math
 import polytopes
-from config import WIDTH, HEIGHT, FPS, ROTATION_SPEED, BACKGROUND
+import config
 
 class App:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
         pygame.display.set_caption("4D Object Rotation")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 24)
         
         self.running = True
-        self.theta = 0.0
-        self.auto_rotate = False
         self.w_values_enabled = True
-        self.rotation_speed = ROTATION_SPEED
+        self.rotation_speed = config.ROTATION_SPEED
         
-        # TODO: Initialize other necessary attributes for the 4D object, vertices, edges, and colors.
+        self.angles = {plane: 0.0 for plane in config.PLANES}
+        self.auto_rotation = {plane: False for plane in config.PLANES}
+        self.chosen_plane = config.PLANES[0]
+
         self.polytope = polytopes.Tesseract()
     
     def handle_events(self):
@@ -33,9 +34,12 @@ class App:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.auto_rotate = not self.auto_rotate
-                elif event.key == pygame.K_t:
+                    self.auto_rotation = {plane: not self.auto_rotation[plane] for plane in config.PLANES}
+                if event.key == pygame.K_t:
                     self.w_values_enabled = not self.w_values_enabled
+                for key, plane in config.PLANE_KEYS:
+                    if event.key == key:
+                        self.auto_rotation[plane] = not self.auto_rotation[plane]
                 # TODO: Add more event handling as needed (e.g., for rotation speed adjustment, changing objects)
     
     def update(self):
@@ -44,7 +48,7 @@ class App:
         # TODO: Add logic for calculating vertices, edges, and colors based on the current theta and other parameters.
     
     def render(self):
-        self.screen.fill(BACKGROUND)
+        self.screen.fill(config.BACKGROUND)
         # TODO: Add rendering logic for the 4D object, including drawing vertices, edges, and optionally displaying w-values.
         pygame.display.update()
     
@@ -53,5 +57,5 @@ class App:
             self.handle_events()
             self.update()
             self.render()
-            self.clock.tick(FPS)
+            self.clock.tick(config.FPS)
         pygame.quit()
