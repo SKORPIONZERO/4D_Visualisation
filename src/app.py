@@ -21,12 +21,14 @@ class App:
         self.running = True
         self.w_values_enabled = True
         self.rotation_speed = config.BASE_ROTATION_SPEED
+        self.distance_4D = 3.0
+        self.distance_3D = 4.0
         
         self.order_rotation_applied = config.PLANES
+        self.chosen_plane = config.PLANES[0]
         self.angles = {plane: 0.0 for plane in config.PLANES}
         self.auto_rotation = {plane: False for plane in config.PLANES}
         self.rotation_speeds = {plane: self.rotation_speed for plane in config.PLANES}
-        self.chosen_plane = config.PLANES[0]
 
         self.polytope = polytopes.Tesseract()
     

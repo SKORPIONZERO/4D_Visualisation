@@ -7,7 +7,7 @@ import numpy as np
 import math
 import config
 
-def create_rotation_matrix(plane, theta):
+def create_rotation_matrix(plane, theta) -> np.ndarray:
     c, s = math.cos(theta), math.sin(theta)
     matrix = np.identity(4)
     axis1, axis2 = config.AXES[plane[0]], config.AXES[plane[1]]
@@ -26,3 +26,6 @@ def compose_rotation_matrices(angles, order=config.PLANES):
         rotation_matrix = create_rotation_matrix(plane, angle)
         composed_matrix = rotation_matrix @ composed_matrix
     return composed_matrix
+
+def rotate_vertex(composed_rotation_matrix, vertex):
+    return composed_rotation_matrix @ vertex
