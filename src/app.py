@@ -7,7 +7,10 @@ currently playing, whether w-values are shown) as instance attributes
 """
 import pygame
 import math
+import numpy as np
 import polytopes
+import rotation
+import projection
 import config
 
 class App:
@@ -21,9 +24,13 @@ class App:
         self.running = True
         self.w_values_enabled = True
         self.rotation_speed = config.BASE_ROTATION_SPEED
+        self.number_of_line_segments = 10
+        self.object_scale = 200
+        self.unit_distance = 1
         self.distance_4D = 3.0
         self.distance_3D = 4.0
         
+        self.centre = np.array([self.screen.get_width() / 2, self.screen.get_height() / 2])     
         self.order_rotation_applied = config.PLANES
         self.chosen_plane = config.PLANES[0]
         self.angles = {plane: 0.0 for plane in config.PLANES}
@@ -50,6 +57,13 @@ class App:
         for plane in config.PLANES:
             if self.auto_rotation[plane]:
                 self.angles[plane] = (self.angles[plane] + self.rotation_speed) % (2 * math.pi)
+        final_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
+        self.polytope.vertices@=final_rotation_matrix
+        projected_vertices, w_values = np.array([]), np.array([])
+        for vertex in self.polytope.vertices:
+            projected_vertex, w_value = projection.project_4D_to_2D(vertex, self.distance_4D, self.distance_3D)
+            projected_vertices.append(projected_vertex)
+            w_values.append(w_value)
         # TODO: Add logic for calculating vertices, edges, and colors based on the current theta and other parameters.
     
     def render(self):
