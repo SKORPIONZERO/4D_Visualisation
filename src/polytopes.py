@@ -11,7 +11,8 @@ from abc import ABC, abstractmethod
 class Polytope(ABC):
     def __init__(self, unit_distance=1.0):
         self.unit_distance = unit_distance
-        self.vertices = self._generate_vertices()
+        self.original_vertices = self._generate_vertices()
+        self.vertices = self.original_vertices.copy()
         self.edges = self._generate_edges()
         self.bound = self._calculate_bound()
 
