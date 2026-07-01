@@ -59,16 +59,20 @@ class App:
                 self.angles[plane] = (self.angles[plane] + self.rotation_speed) % (2 * math.pi)
         final_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
         self.polytope.vertices@=final_rotation_matrix
-        projected_vertices, w_values = np.array([]), np.array([])
+        projected_vertices, w_values = [], []
         for vertex in self.polytope.vertices:
             projected_vertex, w_value = projection.project_4D_to_2D(vertex, self.distance_4D, self.distance_3D)
-            projected_vertices.append(projected_vertex)
+            projected_vertices.append(self.centre + projected_vertex*self.object_scale)
             w_values.append(w_value)
-        # TODO: Add logic for calculating vertices, edges, and colors based on the current theta and other parameters.
-    
+        self.polytope.projected_vertices = np.array(projected_vertices)
+        self.polytope.w_values = np.array(w_values)
+
     def render(self):
         self.screen.fill(config.BACKGROUND)
-        # TODO: Add rendering logic for the 4D object, including drawing vertices, edges, and optionally displaying w-values.
+        for vertex in range(len(self.polytope.projected_vertices)):
+            pygame.draw.circle(self.screen, config.BLUE, (int(self.polytope.projected_vertices[vertex][0]), int(self.polytope.projected_vertices[vertex][1])), 5)
+        for edge in range(len(self.polytope.edges)):
+            pygame.draw.line(self.screen, config.WHITE, self.polytope.projected_vertices[self.polytope.edges[edge][0]], self.polytope.projected_vertices[self.polytope.edges[edge][1]], 2)
         pygame.display.update()
     
     def run(self):

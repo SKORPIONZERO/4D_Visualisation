@@ -22,7 +22,7 @@ def compose_rotation_matrices(angles: dict, order: dict=config.PLANES) -> np.nda
     them in the specified order, so that the vertices vector can be just
     multiplied by the resulting matrix to get the final rotated vertices."""
     composed_matrix = np.identity(4)
-    for plane, angle in zip(order, angles):
+    for plane, angle in zip(order, angles.values()):
         rotation_matrix = _create_rotation_matrix(plane, angle)
         composed_matrix = rotation_matrix @ composed_matrix
     return composed_matrix

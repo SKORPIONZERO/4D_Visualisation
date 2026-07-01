@@ -2,26 +2,6 @@ import pygame
 import numpy as np
 import colorsys
 
-def calculate_vertices(centre, object_scale, line_vectors, theta):
-    """Calculates the current vertices for each rotation axis."""
-    current_vertices = []
-    w_values = []
-    Rxy, Rxz, Rxw, Ryz, Ryw, Rzw = define_rotation_matrices(theta)
-    distance_4D = 3.0
-    distance_3D = 4.0
-    for k in range(len(line_vectors)):
-        # Apply all rotation matrices in sequence
-        rotated_vertex = Rxw @ Rxy @ Rxz @ Ryw @ Ryz @ Rzw @ line_vectors[k]
-        x, y, z, w = rotated_vertex
-        factor_4d = distance_4D/(distance_4D-w)
-        x, y, z = x * factor_4d, y * factor_4d, z * factor_4d  # Apply 4D perspective projection
-        factor_3d = distance_3D/(distance_3D-z)
-        x, y = x * factor_3d, y * factor_3d  # Apply 3D perspective projection
-        current_vertex = centre + np.array([x, y]) * (object_scale // 2)
-        current_vertices.append(current_vertex)
-        w_values.append(w)
-    return current_vertices, w_values
-
 def lerp_colours_rgb(value, max_value, min_value=None):
     R1, G1, B1 = BLUE
     R2, G2, B2 = RED
@@ -59,8 +39,6 @@ def lerp_colours(values,max_value, min_value=None, mode='rgb'):
     return colours
 
 def display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin):
-    for vertex in range(len(current_vertices)):
-            pygame.draw.circle(screen, colours[vertex], (int(current_vertices[vertex][0]), int(current_vertices[vertex][1])), 5)
     for edge in range(len(edges)):
         start_pos = current_vertices[edges[edge][0]]
         for i in range(number_of_line_segments + 1):
@@ -76,15 +54,6 @@ def draw_text(screen, font, w_values, current_vertices):
         screen.blit(text, (int(vertex[0]), int(vertex[1])))
 
 def main():
-    centre = [screen.get_width() / 2, screen.get_height() / 2]
-    object_scale = 400
-    unit_distance = 1
-    number_of_line_segments = 20
-    # max_distance_from_origin = math.sqrt(dimensions) * unit_distance
-    max_distance_from_origin = unit_distance
-    line_vectors = calculate_line_vectors(unit_distance)
-    edges = calculate_edges(line_vectors)
-    current_vertices, w_values = calculate_vertices(centre, object_scale, line_vectors, theta)
     colours = lerp_colours(w_values, max_distance_from_origin, mode='hsv')
     display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin) 
     if w_values_shown:
