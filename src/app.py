@@ -55,12 +55,12 @@ class App:
         #         self.angles[plane] = (self.angles[plane] + self.rotation_speed) % (2 * math.pi)
         #final_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
         #self.polytope.vertices = np.array([final_rotation_matrix @ vertex for vertex in self.polytope.vertices])
-        self.order_rotation_applied = ("zw", "xw", "xy", "yw", "yz", "xz")
+        self.order_rotation_applied = ("zw", "yz", "yw", "xz", "xy", "xw")
         composed_rotation_matrix = rotation.compose_rotation_matrices(self.theta, self.order_rotation_applied)
         projected_vertices, w_values = [], []
         for vertex in self.polytope.vertices:
             projected_vertex, w_value = projection.project_4D_to_2D(composed_rotation_matrix @ vertex, config.DISTANCE_4D, config.DISTANCE_3D)
-            projected_vertices.append(self.centre + projected_vertex*config.OBJECT_SCALE)
+            projected_vertices.append(self.centre + projected_vertex*config.OBJECT_SCALE/self.polytope.bound)
             w_values.append(w_value)
         self.polytope.projected_vertices = np.array(projected_vertices)
         self.polytope.w_values = np.array(w_values)

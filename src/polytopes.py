@@ -74,8 +74,9 @@ class Cell16(Polytope):
         edges = []
         for i in range(len(self.vertices)):
             for j in range(i + 1, len(self.vertices)):
-                if self.vertices[i] != [-l for l in self.vertices[j]]:                
+                if (self.vertices[i] != [-l for l in self.vertices[j]]).any():                
                     edges.append((i, j))
+                pass
         return np.array(edges)
 
     def _calculate_bound(self):
