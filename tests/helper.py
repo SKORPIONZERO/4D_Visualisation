@@ -48,16 +48,9 @@ def display_shape(screen, current_vertices, w_values, edges, colours, number_of_
             pygame.draw.line(screen, colours_t, start_pos, coordinates_t, 3)
             start_pos = coordinates_t
 
-def draw_text(screen, font, w_values, current_vertices):
-    for i, vertex in enumerate(current_vertices):
-        text = font.render(f"{w_values[i]:.2f}", True, (255, 255, 255))
-        screen.blit(text, (int(vertex[0]), int(vertex[1])))
-
 def main():
     colours = lerp_colours(w_values, max_distance_from_origin, mode='hsv')
     display_shape(screen, current_vertices, w_values, edges, colours, number_of_line_segments, max_distance_from_origin) 
-    if w_values_shown:
-        draw_text(screen, font, w_values, current_vertices)
 
 if __name__ == "__main__":
     main()

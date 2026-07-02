@@ -16,20 +16,19 @@ import rendering
 
 class App:
     def __init__(self):
-        self.
+        self.display = rendering.Display()
         
         self.running = True
-        self.centre = np.array([self.screen.get_width() / 2, self.screen.get_height() / 2])     
+        self.centre = np.array([self.display.screen.get_width() / 2, self.display.screen.get_height() / 2])     
         self.theta = 0.0
         self.auto_rotation = False
         self.order_rotation_applied = config.PLANES
-        #self.w_values_enabled = True
         #self.chosen_plane = config.PLANES[0]
         #self.angles = {plane: 0.0 for plane in config.PLANES}
         #self.auto_rotation = {plane: False for plane in config.PLANES}
         #self.rotation_speeds = {plane: self.rotation_speed for plane in config.PLANES}
 
-        self.polytope = polytopes.Tesseract()
+        self.polytope = polytopes.Cell16()
     
     def handle_events(self):
         for event in pygame.event.get():
@@ -40,7 +39,7 @@ class App:
                     #self.auto_rotation[self.chosen_plane] = not self.auto_rotation[self.chosen_plane]
                     self.auto_rotation = not self.auto_rotation
                 if event.key == pygame.K_t:
-                    #self.w_values_enabled = not self.w_values_enabled
+                    self.display.w_values_enabled = not self.display.w_values_enabled
                     pass
                 for key, plane in config.PLANE_KEYS.items():
                     if event.key == key:
@@ -67,8 +66,10 @@ class App:
         self.polytope.w_values = np.array(w_values)
 
     def render(self):
-        self.display.fill(config.BACKGROUND)
-        rendering.draw_polytope(self.screen, self.polytope)
+        self.display.screen.fill(config.BACKGROUND)
+        rendering.draw_polytope(self.display, self.polytope)
+        if self.display.w_values_enabled:
+            rendering.draw_w_labels(self.display, self.polytope)
         pygame.display.update()
     
     def run(self):
@@ -76,5 +77,5 @@ class App:
             self.handle_events()
             self.update()
             self.render()
-            self.clock.tick(config.FPS)
+            self.display.clock.tick(config.FPS)
         pygame.quit()

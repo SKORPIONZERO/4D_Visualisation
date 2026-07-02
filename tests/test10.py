@@ -86,7 +86,7 @@ def calculate_edges(line_vectors):
         for j in range(i + 1, len(line_vectors)):
             if line_vectors[i] != [-l for l in line_vectors[j]]:
                 edges.append((i, j))
-    print(len(edges))  # Debugging statement
+    #print(len(edges))  # Debugging statement
     return np.array(edges)
 
 def lerp_colours_rgb(value, max_value, min_value=None):

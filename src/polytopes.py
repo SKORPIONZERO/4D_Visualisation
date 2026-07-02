@@ -52,7 +52,7 @@ class Tesseract(Polytope):
                         differences += 1
                 if differences == 1:
                     edges.append((i, j))
-        return edges
+        return np.array(edges)
 
     def _calculate_bound(self):
         """Calculate the bound (max distance from origin) of the tesseract."""
@@ -76,7 +76,7 @@ class Cell16(Polytope):
             for j in range(i + 1, len(self.vertices)):
                 if self.vertices[i] != [-l for l in self.vertices[j]]:                
                     edges.append((i, j))
-        return edges
+        return np.array(edges)
 
     def _calculate_bound(self):
         """Calculate the bound (max distance from origin) of the 16-cell."""
