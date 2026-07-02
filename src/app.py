@@ -12,24 +12,21 @@ import polytopes
 import rotation
 import projection
 import config
+import rendering
 
 class App:
     def __init__(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
-        pygame.display.set_caption("4D Object Rotation")
-        self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont("Arial", 24)
+        self.
         
         self.running = True
-        #self.w_values_enabled = True
         self.centre = np.array([self.screen.get_width() / 2, self.screen.get_height() / 2])     
+        self.theta = 0.0
+        self.auto_rotation = False
         self.order_rotation_applied = config.PLANES
+        #self.w_values_enabled = True
         #self.chosen_plane = config.PLANES[0]
         #self.angles = {plane: 0.0 for plane in config.PLANES}
-        self.theta = 0.0
         #self.auto_rotation = {plane: False for plane in config.PLANES}
-        self.auto_rotation = False
         #self.rotation_speeds = {plane: self.rotation_speed for plane in config.PLANES}
 
         self.polytope = polytopes.Tesseract()
@@ -59,10 +56,10 @@ class App:
         #         self.angles[plane] = (self.angles[plane] + self.rotation_speed) % (2 * math.pi)
         #final_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
         #self.polytope.vertices = np.array([final_rotation_matrix @ vertex for vertex in self.polytope.vertices])
-        Rxy, Rxz, Rxw, Ryz, Ryw, Rzw = rotation.define_rotation_matrices(self.theta)
-        composed_rotation_matrix = Rxw @ Rxy @ Rxz @ Ryw @ Ryz @ Rzw
+        self.order_rotation_applied = ("zw", "xw", "xy", "yw", "yz", "xz")
+        composed_rotation_matrix = rotation.compose_rotation_matrices(self.theta, self.order_rotation_applied)
         projected_vertices, w_values = [], []
-        for vertex in self.polytope.original_vertices:
+        for vertex in self.polytope.vertices:
             projected_vertex, w_value = projection.project_4D_to_2D(composed_rotation_matrix @ vertex, config.DISTANCE_4D, config.DISTANCE_3D)
             projected_vertices.append(self.centre + projected_vertex*config.OBJECT_SCALE)
             w_values.append(w_value)
@@ -70,11 +67,8 @@ class App:
         self.polytope.w_values = np.array(w_values)
 
     def render(self):
-        self.screen.fill(config.BACKGROUND)
-        for vertex in range(len(self.polytope.projected_vertices)):
-            pygame.draw.circle(self.screen, config.BLUE, (int(self.polytope.projected_vertices[vertex][0]), int(self.polytope.projected_vertices[vertex][1])), 5)
-        for edge in range(len(self.polytope.edges)):
-            pygame.draw.line(self.screen, config.WHITE, self.polytope.projected_vertices[self.polytope.edges[edge][0]], self.polytope.projected_vertices[self.polytope.edges[edge][1]], 2)
+        self.display.fill(config.BACKGROUND)
+        rendering.draw_polytope(self.screen, self.polytope)
         pygame.display.update()
     
     def run(self):
