@@ -7,7 +7,7 @@ import pygame
 
 WIDTH, HEIGHT = 1200, 800
 FPS = 60
-BASE_ROTATION_SPEED = 0.01  # radians per frame
+ROTATION_SPEED = 0.01  # radians per frame
 DISTANCE_4D = 3.0  # Distance from the 4D object to the 4D camera
 DISTANCE_3D = 4.0  # Distance from the 3D projection to the 3D camera
 UNIT_DISTANCE = 1.0  # Distance from the center to the vertices of the polytope

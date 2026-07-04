@@ -17,11 +17,11 @@ def _create_rotation_matrix(plane: str, angle: float) -> np.ndarray:
     matrix[axis2, axis2] = c
     return matrix
 
-def compose_rotation_matrices(angle, order: dict=config.PLANES) -> np.ndarray:
+def compose_rotation_matrices(angles: dict, order: dict=config.PLANES) -> np.ndarray:
     """Composes rotation matrices for multiple planes and angles, applying
     them in the specified order, so that the vertices vector can be just
     multiplied by the resulting matrix to get the final rotated vertices."""
     composed_matrix = np.identity(4)
     for plane in order:
-        composed_matrix = _create_rotation_matrix(plane, angle) @ composed_matrix
+        composed_matrix = _create_rotation_matrix(plane, angles[plane]) @ composed_matrix
     return composed_matrix
