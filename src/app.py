@@ -21,6 +21,7 @@ class App:
         
         self.running = True
         self.centre = np.array([self.display.screen.get_width() / 2, self.display.screen.get_height() / 2])
+        self.manual_key_rotation_queue = []
         self.auto_rotation = False
         self.order_rotation_applied = config.PLANES
         self.chosen_plane = config.PLANES[0]
@@ -33,20 +34,35 @@ class App:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     self.polytope = polytopes.Tesseract()
-                if event.key == pygame.K_w:
+                elif event.key == pygame.K_w:
                     self.polytope = polytopes.Cell16()
-                if event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_SPACE:
                     self.auto_rotation = not self.auto_rotation
-                if event.key == pygame.K_t:
+                elif event.key == pygame.K_t:
                     self.display.w_values_enabled = not self.display.w_values_enabled
-                if event.key == pygame.K_h:
+                elif event.key == pygame.K_h:
                     self.display.helper_legend_enabled = not self.display.helper_legend_enabled
-                if event.key == pygame.K_TAB:
+                elif event.key == pygame.K_TAB:
                     self.display.lerp_mode = (self.display.lerp_mode + 1) % len(config.LERP_MODES)
+                if event.key == pygame.K_RIGHT:
+                    self.manual_key_rotation_queue.append(pygame.K_RIGHT)
+                elif event.key == pygame.K_LEFT:
+                    self.manual_key_rotation_queue.append(pygame.K_LEFT)
                 for key, plane in config.PLANE_KEYS.items():
                     if event.key == key:
                         self.chosen_plane = plane
-                # TODO: Add more event handling as needed (e.g., for rotation speed adjustment, changing objects)
+                self.manual_key_rotation_queue.append(event.key)
+        self.process_manual_key_rotation_queue()
+
+    def process_manual_key_rotation_queue(self):
+        for key in self.manual_key_rotation_queue:
+            if key == pygame.K_RIGHT:
+                self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] + config.ROTATION_SPEED) % (2 * math.pi)
+            elif key == pygame.K_LEFT:
+                self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] - config.ROTATION_SPEED) % (2 * math.pi)
+            
+            
+        self.manual_key_rotation_queue.clear()  # Clear the queue after processing
     
     def update(self):
         if self.auto_rotation:
