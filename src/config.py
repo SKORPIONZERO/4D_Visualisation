@@ -27,3 +27,5 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 ORANGE = (255, 100, 0)
 BACKGROUND = (30, 30, 30)
+LERP_MODES = {'rgb': 0,
+              'hsv': 1}  # Available color interpolation modes

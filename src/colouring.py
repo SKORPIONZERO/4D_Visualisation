@@ -40,13 +40,13 @@ def lerp_colours_hsv(value: float, max_value: float, min_value: float = None) ->
     r, g, b = colorsys.hsv_to_rgb(hue / 360.0, saturation, value_brightness)
     return (int(r * 255), int(g * 255), int(b * 255))
 
-def lerp_colours(values: np.ndarray, max_value: float, min_value: float = None, mode: str = 'rgb') -> list:
+def lerp_colours(values: np.ndarray, max_value: float, min_value: float = None, mode: int = config.LERP_MODES['hsv']) -> list:
     """
     Linearly interpolate between colours based on an array of values.
     """
-    if mode == 'rgb':
+    if mode == config.LERP_MODES['rgb']:
         return [lerp_colours_rgb(value, max_value, min_value) for value in values]
-    elif mode == 'hsv':
+    elif mode == config.LERP_MODES['hsv']:
         return [lerp_colours_hsv(value, max_value, min_value) for value in values]
     else:
         raise ValueError("Invalid mode. Please choose 'rgb' or 'hsv'.")

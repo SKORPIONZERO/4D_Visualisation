@@ -28,7 +28,7 @@ class App:
         #self.auto_rotation = {plane: False for plane in config.PLANES}
         #self.rotation_speeds = {plane: self.rotation_speed for plane in config.PLANES}
 
-        self.polytope = polytopes.Cell16()
+        self.polytope = polytopes.Tesseract()
     
     def handle_events(self):
         for event in pygame.event.get():
@@ -41,6 +41,12 @@ class App:
                 if event.key == pygame.K_t:
                     self.display.w_values_enabled = not self.display.w_values_enabled
                     pass
+                if event.key == pygame.K_q:
+                    self.polytope = polytopes.Tesseract()
+                if event.key == pygame.K_w:
+                    self.polytope = polytopes.Cell16()
+                if event.key == pygame.K_e:
+                    self.display.lerp_mode = (self.display.lerp_mode + 1) % len(config.LERP_MODES)
                 for key, plane in config.PLANE_KEYS.items():
                     if event.key == key:
                         #self.chosen_plane = plane
@@ -70,6 +76,7 @@ class App:
         rendering.draw_polytope(self.display, self.polytope)
         if self.display.w_values_enabled:
             rendering.draw_w_labels(self.display, self.polytope)
+        rendering.draw_colour_legend(self.display, self.polytope)
         pygame.display.update()
     
     def run(self):
