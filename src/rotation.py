@@ -6,6 +6,7 @@ and composing them based on specified order with angles for each plane.
 """
 import numpy as np
 import math
+
 import config
 
 def _create_rotation_matrix(plane: str, angle: float) -> np.ndarray:
@@ -18,7 +19,7 @@ def _create_rotation_matrix(plane: str, angle: float) -> np.ndarray:
     matrix[axis2, axis2] = c
     return matrix
 
-def compose_rotation_matrices(angles: dict, order: dict=config.PLANES) -> np.ndarray:
+def compose_rotation_matrices(angles: dict, order: list=config.PLANES) -> np.ndarray:
     """Composes rotation matrices for multiple planes and angles, applying
     them in the specified order, so that the vertices vector can be just
     multiplied by the resulting matrix to get the final rotated vertices."""

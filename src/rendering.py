@@ -5,10 +5,11 @@ Logic for rendering the polytope, its edges, and the w-values on the pygame wind
 Contains the Display class, which manages the pygame window and its properties.
 Displays the legend for controls, the colour legend, and the rotation planes text.
 """
+import pygame
+
 import config
 import polytopes
 import colouring
-import pygame
 
 class Display:
     def __init__(self) -> None:
@@ -20,6 +21,7 @@ class Display:
         self.font = pygame.font.SysFont("Courier New", 18)
 
         self.w_values_enabled = True
+        self.able_to_change_w_values_visibility = True  # Flag to control whether w-values can be turned on/off
         self.helper_legend_enabled = True
         self.lerp_mode = config.LERP_MODES['hsv']  # Default to HSV mode
 
@@ -46,7 +48,33 @@ def draw_w_labels(display: Display, polytope: polytopes.Polytope) -> None:
     for i, vertex in enumerate(polytope.projected_vertices):
         text = display.font.render(f"{polytope.w_values[i]:.2f}", True, (255, 255, 255))
         display.screen.blit(text, (int(vertex[0]), int(vertex[1])))
-        
+
+def draw_helper_legend(display: Display) -> None:
+    # Draw the legend for controls
+    legend_texts = [
+        "Controls:",
+        "Q: Switch to Pentachoron(5-Cell)",
+        "W: Switch to Tesseract(8-Cell)",
+        "E: Switch to Hexadecachoron(16-Cell)",
+        "A: Switch to Icositetrachoron(24-Cell)",
+        "S: Switch to Hecatonicosachoron(120-Cell) -",
+        "Turns off W-Values Display for better performance",
+        "R: Reset the order and angles of rotation planes",
+        "T: Turn W-Values Display On/Off",
+        "H: Turn Helper Legend On/Off",
+        "1-6: Select Rotation Plane",
+        "(1) XY, (2) XZ, (3) XW, (4) YZ, (5) YW, (6) ZW",
+        "->: Rotate Clockwise in chosen Plane",
+        "<-: Rotate Anti-Clockwise in chosen Plane",
+        "Z: Move the chosen plane to the left of the order",
+        "X: Move the chosen plane to the right of the order",
+        "Space: Turn Auto-Rotation On/Off",
+        "Tab: Change Colour Interpolation Mode"
+    ]
+    for i, text in enumerate(legend_texts):
+        rendered_text = display.controls_font.render(text, True, (255, 255, 255))
+        display.screen.blit(rendered_text, (10, 10 + i * 20))
+
 def draw_colour_legend(display: Display, polytope: polytopes.Polytope) -> None:
     legend_height = 20
     legend_width = 200
@@ -69,32 +97,6 @@ def draw_colour_legend(display: Display, polytope: polytopes.Polytope) -> None:
     display.screen.blit(name_text, (legend_x + (legend_width - name_text.get_width()) / 2, legend_y - 25))
     display.screen.blit(min_text, (legend_x - min_text.get_width() / 2, legend_y + 20))
     display.screen.blit(max_text, (legend_x + legend_width - max_text.get_width() / 2 - 5, legend_y + 20))
-
-def draw_helper_legend(display: Display) -> None:
-    # Draw the legend for controls
-    legend_texts = [
-        "Controls:",
-        "Q: Switch to Pentachoron(5-Cell)",
-        "W: Switch to Tesseract(8-Cell)",
-        "E: Switch to Hexadecachoron(16-Cell)",
-        "A: Switch to Icositetrachoron(24-Cell)",
-        "S: Switch to Hecatonicosachoron(120-Cell)",
-        "R: Reset the order and angles of rotation planes",
-        "T: Turn W-Values Display On/Off",
-        "H: Turn Helper Legend On/Off",
-        "C: Change order of rotation planes applied",
-        "1-6: Select Rotation Plane",
-        "(1) XY, (2) XZ, (3) XW, (4) YZ, (5) YW, (6) ZW",
-        "->: Rotate Clockwise in chosen Plane",
-        "<-: Rotate Anti-Clockwise in chosen Plane",
-        "Z: Move the chosen plane to the left of the order",
-        "X: Move the chosen plane to the right of the order",
-        "Space: Turn Auto-Rotation On/Off",
-        "Tab: Change Colour Interpolation Mode"
-    ]
-    for i, text in enumerate(legend_texts):
-        rendered_text = display.controls_font.render(text, True, (255, 255, 255))
-        display.screen.blit(rendered_text, (10, 10 + i * 20))
 
 def draw_rotation_planes_text(display: Display, angles: dict, chosen_plane: str, order_rotation_applied: tuple) -> None:
     for i, (plane, angle) in enumerate(reversed(angles.items())):

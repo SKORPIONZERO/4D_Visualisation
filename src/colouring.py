@@ -4,9 +4,10 @@ colouring.py
 This module contains functions for colouring the edges 
 of a polytope based on the w-coordinate values of its vertices.
 """
-import config
 import numpy as np
 import colorsys
+
+import config
 
 def lerp_colours_rgb(value: float, max_value: float, min_value: float = None) -> tuple[int, int, int]:
     """

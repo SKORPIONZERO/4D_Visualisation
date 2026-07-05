@@ -8,6 +8,7 @@ currently On/Off, whether w-coordinates values are shown) as instance attributes
 import pygame
 import math
 import numpy as np
+
 import polytopes
 import rotation
 import projection
@@ -17,7 +18,7 @@ import rendering
 class App:
     def __init__(self) -> None:
         self.display = rendering.Display()
-        self.polytope = polytopes.Tesseract()
+        self.polytope = polytopes.Tesseract_8_Cell()
         
         self.running = True
         self.centre = np.array([self.display.screen.get_width() / 2, self.display.screen.get_height() / 2])
@@ -32,22 +33,24 @@ class App:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    self.polytope = polytopes.Pentachoron()
+                    self.polytope = polytopes.Pentachoron_5_Cell()
                 elif event.key == pygame.K_w:
-                    self.polytope = polytopes.Tesseract()
+                    self.polytope = polytopes.Tesseract_8_Cell()
                 elif event.key == pygame.K_e:
-                    self.polytope = polytopes.Hexadecachoron()
+                    self.polytope = polytopes.Hexadecachoron_16_Cell()
                 elif event.key == pygame.K_a:
-                    self.polytope = polytopes.Icositetrachoron()
+                    self.polytope = polytopes.Icositetrachoron_24_Cell()
                 elif event.key == pygame.K_s:
-                    self.polytope = polytopes.Hecatonicosachoron()
+                    self.polytope = polytopes.Hecatonicosachoron_120_Cell()
+                    self.display.able_to_change_w_values_visibility = False  # Disable the ability to turn w-values on/off for this polytope
+                    self.display.w_values_enabled = False  # Turns off w-values display for better performance
                 elif event.key == pygame.K_r:
                     self.order_rotation_applied = list(config.PLANES)
                     self.angles = {plane: 0.0 for plane in config.PLANES}
                     self.chosen_plane = config.PLANES[0]
                 elif event.key == pygame.K_SPACE:
                     self.auto_rotation = not self.auto_rotation
-                elif event.key == pygame.K_t:
+                elif event.key == pygame.K_t and self.display.able_to_change_w_values_visibility:
                     self.display.w_values_enabled = not self.display.w_values_enabled
                 elif event.key == pygame.K_h:
                     self.display.helper_legend_enabled = not self.display.helper_legend_enabled
@@ -79,6 +82,9 @@ class App:
         if self.auto_rotation:
             for plane in config.PLANES:
                 self.angles[plane] = (self.angles[plane] + config.ROTATION_SPEED) % (2 * math.pi)
+        if type(self.polytope) is not polytopes.Hecatonicosachoron_120_Cell:
+            self.display.able_to_change_w_values_visibility = True  # Re-enable the ability to turn w-values on/off for other polytopes
+            self.w_values_enabled = True  # Ensure w-values are enabled for other polytopes
         composed_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
         projected_vertices, w_values = [], []
         for vertex in self.polytope.vertices:
@@ -89,7 +95,6 @@ class App:
         self.polytope.w_values = np.array(w_values)
 
     def render(self) -> None:
-        self.display.screen.fill(config.BACKGROUND)
         rendering.draw_polytope(self.display, self.polytope)
         if self.display.w_values_enabled:
             rendering.draw_w_labels(self.display, self.polytope)

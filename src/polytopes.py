@@ -9,6 +9,8 @@ import numpy as np
 import itertools
 from abc import ABC, abstractmethod
 
+import config
+
 # Made using AI, for the 120-Cell.
 def _even_permutations(seq):
     """Yield permutations of a 4-element sequence of pairwise-distinct
@@ -22,11 +24,13 @@ def _even_permutations(seq):
             yield tuple(seq[i] for i in perm)
 
 class Polytope(ABC):
-    def __init__(self, unit_distance=1.0) -> None:
-        self.unit_distance = unit_distance
+    def __init__(self) -> None:
+        self.unit_distance = config.UNIT_DISTANCE
         self.vertices = self._generate_vertices()
         self.edges = self._generate_edges()
         self.bound = self._calculate_bound()
+        self.projected_vertices = None  # Will be set after projection
+        self.w_values = None  # Will be set after projection
 
     @abstractmethod
     def _generate_vertices(self) -> np.ndarray:
@@ -43,7 +47,7 @@ class Polytope(ABC):
         """Calculate the bound (max distance from origin) of the polytope."""
         pass
 
-class Pentachoron(Polytope):
+class Pentachoron_5_Cell(Polytope):
     def _generate_vertices(self):
         # Made using AI, I still don't understand how it works, but it works.
         """Generate the vertices of a 5-cell by projecting the 5 standard
@@ -86,7 +90,7 @@ class Pentachoron(Polytope):
         """Calculate the bound (max distance from origin) of the 5-Cell."""
         return math.sqrt(2) * self.unit_distance
 
-class Tesseract(Polytope):
+class Tesseract_8_Cell(Polytope):
     def _generate_vertices(self) -> np.ndarray:
         """Generate the vertices of a tesseract(8-Cell)."""
         vertices = []
@@ -114,7 +118,7 @@ class Tesseract(Polytope):
         """Calculate the bound (max distance from origin) of the tesseract(8-Cell)."""
         return math.sqrt(4) * self.unit_distance
 
-class Hexadecachoron(Polytope):
+class Hexadecachoron_16_Cell(Polytope):
     def _generate_vertices(self) -> np.ndarray:
         """Generate the vertices of a 16-Cell."""
         vertices = []
@@ -132,14 +136,13 @@ class Hexadecachoron(Polytope):
             for j in range(i + 1, len(self.vertices)):
                 if (self.vertices[i] != [-l for l in self.vertices[j]]).any():                
                     edges.append((i, j))
-                pass
         return np.array(edges)
 
     def _calculate_bound(self) -> float:
         """Calculate the bound (max distance from origin) of the 16-Cell."""
         return self.unit_distance
 
-class Icositetrachoron(Polytope):
+class Icositetrachoron_24_Cell(Polytope):
     def _generate_vertices(self):
         """Generate the vertices of a 24-Cell."""
         vertices = []
@@ -171,7 +174,7 @@ class Icositetrachoron(Polytope):
 # The code for the 120-Cell is fully made using AI. At this point
 # of my learning, I have no idea how, the maths behind this works,
 # but it works. I will try to understand it in the future and redo it myself.
-class Hecatonicosachoron(Polytope):
+class Hecatonicosachoron_120_Cell(Polytope):
     def _generate_vertices(self):
         """Generate the 600 vertices of a 120-cell from the 7 standard
         H4 Coxeter-group orbits (see docstring table in accompanying notes)."""
