@@ -1,6 +1,8 @@
 """
 projection.py
 
+Contains functions for projecting 4D points to 3D
+and then to 2D using perspective projection factors.
 """
 import numpy as np
 

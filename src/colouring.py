@@ -2,7 +2,7 @@
 colouring.py
 
 This module contains functions for colouring the edges 
-of a polytope based on the w-values of its vertices.
+of a polytope based on the w-coordinate values of its vertices.
 """
 import config
 import numpy as np

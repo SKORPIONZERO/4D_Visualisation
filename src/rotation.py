@@ -1,7 +1,8 @@
 """
 rotation.py
 
-
+Contains functions for creating rotation matrices for 4D rotations
+and composing them based on specified order with angles for each plane.
 """
 import numpy as np
 import math

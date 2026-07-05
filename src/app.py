@@ -2,8 +2,8 @@
 app.py
  
 App owns the pygame window, the clock, and the main loop. It holds
-the states that change frame to frame (theta, whether rotation is
-currently playing, whether w-values are shown) as instance attributes
+the states that change frame to frame (angles, whether auto rotation is
+currently On/Off, whether w-coordinates values are shown) as instance attributes
 """
 import pygame
 import math
@@ -21,9 +21,8 @@ class App:
         
         self.running = True
         self.centre = np.array([self.display.screen.get_width() / 2, self.display.screen.get_height() / 2])
-        self.manual_key_rotation_queue = []
         self.auto_rotation = False
-        self.order_rotation_applied = config.PLANES
+        self.order_rotation_applied = list(config.PLANES)
         self.chosen_plane = config.PLANES[0]
         self.angles = {plane: 0.0 for plane in config.PLANES}
     
@@ -44,31 +43,32 @@ class App:
                     self.display.helper_legend_enabled = not self.display.helper_legend_enabled
                 elif event.key == pygame.K_TAB:
                     self.display.lerp_mode = (self.display.lerp_mode + 1) % len(config.LERP_MODES)
-                if event.key == pygame.K_RIGHT:
-                    self.manual_key_rotation_queue.append(pygame.K_RIGHT)
-                elif event.key == pygame.K_LEFT:
-                    self.manual_key_rotation_queue.append(pygame.K_LEFT)
+                elif event.key == pygame.K_z:
+                    # Move the chosen plane to the left of the order
+                    index = self.order_rotation_applied.index(self.chosen_plane)
+                    if index > 0:
+                        self.order_rotation_applied[index], self.order_rotation_applied[index - 1] = self.order_rotation_applied[index - 1], self.order_rotation_applied[index]
+                elif event.key == pygame.K_x:
+                    # Move the chosen plane to the right of the order
+                    index = self.order_rotation_applied.index(self.chosen_plane)
+                    if index < len(self.order_rotation_applied) - 1:
+                        self.order_rotation_applied[index], self.order_rotation_applied[index + 1] = self.order_rotation_applied[index + 1], self.order_rotation_applied[index]
                 for key, plane in config.PLANE_KEYS.items():
                     if event.key == key:
                         self.chosen_plane = plane
-                self.manual_key_rotation_queue.append(event.key)
-        self.process_manual_key_rotation_queue()
+        self.process_manual_key_rotation()
 
-    def process_manual_key_rotation_queue(self):
-        for key in self.manual_key_rotation_queue:
-            if key == pygame.K_RIGHT:
-                self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] + config.ROTATION_SPEED) % (2 * math.pi)
-            elif key == pygame.K_LEFT:
-                self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] - config.ROTATION_SPEED) % (2 * math.pi)
-            
-            
-        self.manual_key_rotation_queue.clear()  # Clear the queue after processing
+    def process_manual_key_rotation(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] + config.ROTATION_SPEED) % (2 * math.pi)
+        elif keys[pygame.K_LEFT]:
+            self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] - config.ROTATION_SPEED) % (2 * math.pi)
     
     def update(self):
         if self.auto_rotation:
             for plane in config.PLANES:
                 self.angles[plane] = (self.angles[plane] + config.ROTATION_SPEED) % (2 * math.pi)
-        self.order_rotation_applied = ("zw", "yz", "yw", "xz", "xy", "xw")
         composed_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
         projected_vertices, w_values = [], []
         for vertex in self.polytope.vertices:
@@ -86,7 +86,7 @@ class App:
         if self.display.helper_legend_enabled:
             rendering.draw_helper_legend(self.display)
         rendering.draw_colour_legend(self.display, self.polytope)
-        rendering.draw_rotation_angles_and_chosen_plane_text(self.display, self.angles, self.chosen_plane)
+        rendering.draw_rotation_planes_text(self.display, self.angles, self.chosen_plane, self.order_rotation_applied)
         pygame.display.update()
     
     def run(self):
