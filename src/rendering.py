@@ -21,7 +21,7 @@ class Display:
         self.font = pygame.font.SysFont("Courier New", 18)
 
         self.w_values_enabled = True
-        self.able_to_change_w_values_visibility = True  # Flag to control whether w-values can be turned on/off
+        self.able_to_change_w_values_visibility = True  # Controls whether w-values can be turned on/off
         self.helper_legend_enabled = True
         self.lerp_mode = config.LERP_MODES['hsv']  # Default to HSV mode
 
