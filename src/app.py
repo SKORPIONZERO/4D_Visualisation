@@ -15,7 +15,7 @@ import config
 import rendering
 
 class App:
-    def __init__(self):
+    def __init__(self) -> None:
         self.display = rendering.Display()
         self.polytope = polytopes.Tesseract()
         
@@ -26,15 +26,25 @@ class App:
         self.chosen_plane = config.PLANES[0]
         self.angles = {plane: 0.0 for plane in config.PLANES}
     
-    def handle_events(self):
+    def handle_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    self.polytope = polytopes.Tesseract()
+                    self.polytope = polytopes.Pentachoron()
                 elif event.key == pygame.K_w:
-                    self.polytope = polytopes.Cell16()
+                    self.polytope = polytopes.Tesseract()
+                elif event.key == pygame.K_e:
+                    self.polytope = polytopes.Hexadecachoron()
+                elif event.key == pygame.K_a:
+                    self.polytope = polytopes.Icositetrachoron()
+                elif event.key == pygame.K_s:
+                    self.polytope = polytopes.Hecatonicosachoron()
+                elif event.key == pygame.K_r:
+                    self.order_rotation_applied = list(config.PLANES)
+                    self.angles = {plane: 0.0 for plane in config.PLANES}
+                    self.chosen_plane = config.PLANES[0]
                 elif event.key == pygame.K_SPACE:
                     self.auto_rotation = not self.auto_rotation
                 elif event.key == pygame.K_t:
@@ -58,14 +68,14 @@ class App:
                         self.chosen_plane = plane
         self.process_manual_key_rotation()
 
-    def process_manual_key_rotation(self):
+    def process_manual_key_rotation(self) -> None:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
             self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] + config.ROTATION_SPEED) % (2 * math.pi)
         elif keys[pygame.K_LEFT]:
             self.angles[self.chosen_plane] = (self.angles[self.chosen_plane] - config.ROTATION_SPEED) % (2 * math.pi)
     
-    def update(self):
+    def update(self) -> None:
         if self.auto_rotation:
             for plane in config.PLANES:
                 self.angles[plane] = (self.angles[plane] + config.ROTATION_SPEED) % (2 * math.pi)
@@ -78,7 +88,7 @@ class App:
         self.polytope.projected_vertices = np.array(projected_vertices)
         self.polytope.w_values = np.array(w_values)
 
-    def render(self):
+    def render(self) -> None:
         self.display.screen.fill(config.BACKGROUND)
         rendering.draw_polytope(self.display, self.polytope)
         if self.display.w_values_enabled:
@@ -89,7 +99,7 @@ class App:
         rendering.draw_rotation_planes_text(self.display, self.angles, self.chosen_plane, self.order_rotation_applied)
         pygame.display.update()
     
-    def run(self):
+    def run(self) -> None:
         while self.running:
             self.handle_events()
             self.update()

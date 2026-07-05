@@ -8,7 +8,7 @@ import config
 import numpy as np
 import colorsys
 
-def lerp_colours_rgb(value: float, max_value: float, min_value: float = None) -> tuple:
+def lerp_colours_rgb(value: float, max_value: float, min_value: float = None) -> tuple[int, int, int]:
     """
     Linearly interpolate between two RGB colours based on a value.
     """
@@ -24,7 +24,7 @@ def lerp_colours_rgb(value: float, max_value: float, min_value: float = None) ->
     B_t = int(B1 + (B2 - B1) * normalized_v)
     return (R_t, G_t, B_t)
 
-def lerp_colours_hsv(value: float, max_value: float, min_value: float = None) -> tuple:
+def lerp_colours_hsv(value: float, max_value: float, min_value: float = None) -> tuple[int, int, int]:
     """
     Linearly interpolate between two colours in HSV space based on a value.
     """
