@@ -19,15 +19,6 @@ import rendering
 class App:
     def __init__(self) -> None:
         self.display = rendering.Display()
-        # self.polytopes_by_key = {
-        #     pygame.K_q: polytopes.Pentachoron_5_Cell(),
-        #     pygame.K_w: polytopes.Tesseract_8_Cell(),
-        #     pygame.K_e: polytopes.Hexadecachoron_16_Cell(),
-        #     pygame.K_a: polytopes.Icositetrachoron_24_Cell(),
-        #     pygame.K_s: polytopes.Hecatonicosachoron_120_Cell()
-        # }
-        # self.polytope = self.polytopes_by_key[pygame.K_w]  # Default polytope is Tesseract_8_Cell
-
         polytope_builders = [
             ("Pentachoron (5-Cell)", pygame.K_q, polytopes.Pentachoron_5_Cell),
             ("Tesseract (8-Cell)", pygame.K_w, polytopes.Tesseract_8_Cell),
@@ -41,7 +32,7 @@ class App:
         for i, (name, key, builder) in enumerate(polytope_builders):
             rendering.draw_loading_screen(self.display, f"Loading {name}... ({i + 1}/{len(polytope_builders)})")
             self.polytopes_by_key[key] = builder()
-            sleep(0.3)  # Optional: Add a small delay to show the loading screen for each polytope (visual effect)
+            sleep(0.2)  # Optional: Add a small delay to show the loading screen for each polytope (visual effect)
 
         self.polytope = self.polytopes_by_key[pygame.K_w]  # default to Tesseract
 
