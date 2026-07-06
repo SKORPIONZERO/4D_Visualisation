@@ -8,6 +8,7 @@ currently On/Off, whether w-coordinates values are shown) as instance attributes
 import pygame
 import math
 import numpy as np
+from time import sleep
 
 import polytopes
 import rotation
@@ -40,6 +41,7 @@ class App:
         for i, (name, key, builder) in enumerate(polytope_builders):
             rendering.draw_loading_screen(self.display, f"Loading {name}... ({i + 1}/{len(polytope_builders)})")
             self.polytopes_by_key[key] = builder()
+            sleep(0.3)  # Optional: Add a small delay to show the loading screen for each polytope (visual effect)
 
         self.polytope = self.polytopes_by_key[pygame.K_w]  # default to Tesseract
 

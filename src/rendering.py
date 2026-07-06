@@ -125,12 +125,6 @@ def draw_fps(display: Display) -> None:
     fps_text = display.font.render(f"FPS: {int(display.clock.get_fps())}", True, config.WHITE)
     display.screen.blit(fps_text, (10, display.screen.get_height() - 230))
 
-
-
-
-
-
-# rendering.py — add a helper for drawing a loading frame
 def draw_loading_screen(display: Display, message: str) -> None:
     display.screen.fill(config.BACKGROUND)
     text = display.font.render(message, True, config.WHITE)
