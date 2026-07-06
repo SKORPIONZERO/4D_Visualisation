@@ -91,14 +91,17 @@ class App:
             for plane in config.PLANES:
                 self.angles[plane] = (self.angles[plane] + config.ROTATION_SPEED) % (2 * math.pi)
         composed_rotation_matrix = rotation.compose_rotation_matrices(self.angles, self.order_rotation_applied)
-        rotated_vertices = composed_rotation_matrix @ self.polytope.vertices.T
-        projected_vertices, w_values = [], []
-        for vertex in self.polytope.vertices:
-            projected_vertex, w_value = projection.project_4D_to_2D(composed_rotation_matrix @ vertex, config.DISTANCE_4D, config.DISTANCE_3D)
-            projected_vertices.append(self.centre + projected_vertex*config.OBJECT_SCALE/self.polytope.bound)
-            w_values.append(w_value)
-        self.polytope.projected_vertices = np.array(projected_vertices)
-        self.polytope.w_values = np.array(w_values)
+        rotated_vertices = (composed_rotation_matrix @ self.polytope.vertices.T).T
+        projected_vertices, w_values = projection.project_multiple_4D_to_2D(rotated_vertices, config.DISTANCE_4D, config.DISTANCE_3D)
+        # projected_vertices, w_values = [], []
+        # for vertex in self.polytope.vertices:
+        #     projected_vertex, w_value = projection.project_4D_to_2D(composed_rotation_matrix @ vertex, config.DISTANCE_4D, config.DISTANCE_3D)
+        #     projected_vertices.append(self.centre + projected_vertex*config.OBJECT_SCALE/self.polytope.bound)
+        #     w_values.append(w_value)
+        # self.polytope.projected_vertices = np.array(projected_vertices)
+        # self.polytope.w_values = np.array(w_values)
+        self.polytope.projected_vertices = self.centre + projected_vertices*config.OBJECT_SCALE/self.polytope.bound
+        self.polytope.w_values = w_values
 
     def render(self) -> None:
         rendering.draw_polytope(self.display, self.polytope)
