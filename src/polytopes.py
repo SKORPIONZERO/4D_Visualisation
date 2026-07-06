@@ -171,6 +171,8 @@ class Icositetrachoron_24_Cell(Polytope):
         """Calculate the bound (max distance from origin) of the 24-Cell."""
         return self.unit_distance * math.sqrt(2)
 
+#----------------------------------------------------------------------------------------------------
+
 # The code for the 120-Cell is fully made using AI. At this point
 # of my learning, I have no idea how, the maths behind this works,
 # but it works. I will try to understand it in the future and redo it myself.
@@ -242,4 +244,56 @@ class Hecatonicosachoron_120_Cell(Polytope):
 
     def _calculate_bound(self):
         """All raw vertices have norm sqrt(8), scaled to unit_distance."""
+        return self.unit_distance
+
+# The code for the 600-Cell is fully made using AI. At this point
+# of my learning, I have no idea how, the maths behind this works,
+# but it works. I will try to understand it in the future and redo it myself.
+class Hexacosichoron_600_Cell(Polytope):
+    def _generate_vertices(self):
+        """Generate the 120 vertices of a 600-cell from its 3 standard
+        orbit groups under icosian/H4 symmetry, all lying on the unit
+        sphere (circumradius = unit_distance)."""
+        phi = (1 + math.sqrt(5)) / 2
+        raw_vertices = set()
+
+        # Group 1: all permutations of (±1, 0, 0, 0) -> 8 vertices
+        for axis in range(4):
+            for sign in [1, -1]:
+                vertex = [0, 0, 0, 0]
+                vertex[axis] = sign
+                raw_vertices.add(tuple(round(c, 9) for c in vertex))
+
+        # Group 2: all sign combinations of (±1/2, ±1/2, ±1/2, ±1/2) -> 16 vertices
+        for signs in itertools.product([1, -1], repeat=4):
+            vertex = [s * 0.5 for s in signs]
+            raw_vertices.add(tuple(round(c, 9) for c in vertex))
+
+        # Group 3: even permutations of (0, ±phi/2, ±1/2, ±1/(2*phi)) -> 96 vertices
+        for signs in itertools.product([1, -1], repeat=3):
+            base = [0, signs[0] * phi / 2, signs[1] * 0.5, signs[2] / (2 * phi)]
+            for perm in _even_permutations(base):
+                raw_vertices.add(tuple(round(c, 9) for c in perm))
+
+        vertices = np.array(sorted(raw_vertices))
+        # Every raw vertex already has norm 1 (unit circumradius), so just scale.
+        return vertices * self.unit_distance
+
+    def _generate_edges(self):
+        """Connect every pair of vertices at the minimum pairwise distance
+        (the 600-cell is edge-transitive with vertex degree 12)."""
+        n = len(self.vertices)
+        pair_dists = []
+        for i in range(n):
+            diffs = self.vertices[i + 1:] - self.vertices[i]
+            dists = np.linalg.norm(diffs, axis=1)
+            for offset, d in enumerate(dists):
+                pair_dists.append((i, i + 1 + offset, d))
+
+        min_dist = min(d for _, _, d in pair_dists)
+        edges = [(i, j) for i, j, d in pair_dists if np.isclose(d, min_dist, rtol=1e-4)]
+        return np.array(edges)
+
+    def _calculate_bound(self):
+        """All raw vertices lie on the unit sphere, scaled to unit_distance."""
         return self.unit_distance

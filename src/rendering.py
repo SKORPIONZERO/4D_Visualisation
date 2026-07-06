@@ -23,6 +23,7 @@ class Display:
         self.w_values_enabled = True
         self.able_to_change_w_values_visibility = True  # Controls whether w-values can be turned on/off
         self.helper_legend_enabled = True
+        self.fps_display_enabled = True  # Controls whether FPS display is shown
         self.lerp_mode = config.LERP_MODES['hsv']  # Default to HSV mode
         
         self.helper_legend_surface = self._build_helper_legend_surface()
@@ -35,11 +36,13 @@ class Display:
             "W: Switch to Tesseract(8-Cell)",
             "E: Switch to Hexadecachoron(16-Cell)",
             "A: Switch to Icositetrachoron(24-Cell)",
-            "S: Switch to Hecatonicosachoron(120-Cell) -",
+            "S: Switch to Hecatonicosachoron(120-Cell)",
+            "D: Switch to Hexacontachoron(600-Cell)",
             "Turns off W-Values Display for better performance",
             "R: Reset the order and angles of rotation planes",
             "T: Turn W-Values Display On/Off",
             "H: Turn Helper Legend On/Off",
+            "F: Turn FPS Display On/Off",
             "1-6: Select Rotation Plane",
             "(1) XY, (2) XZ, (3) XW, (4) YZ, (5) YW, (6) ZW",
             "->: Rotate Clockwise in chosen Plane",
@@ -117,3 +120,20 @@ def draw_rotation_planes_text(display: Display, angles: dict, chosen_plane: str,
     order_text = display.font.render(f"Order of Rotation Applied: {' -> '.join(list(order_rotation_applied))}", True, config.WHITE)
     display.screen.blit(chosen_plane_text, (display.screen.get_width() - chosen_plane_text.get_width() - 10, display.screen.get_height() - 50))
     display.screen.blit(order_text, (display.screen.get_width() - order_text.get_width() - 10, display.screen.get_height() - 80))
+
+def draw_fps(display: Display) -> None:
+    fps_text = display.font.render(f"FPS: {int(display.clock.get_fps())}", True, config.WHITE)
+    display.screen.blit(fps_text, (10, display.screen.get_height() - 230))
+
+
+
+
+
+
+# rendering.py — add a helper for drawing a loading frame
+def draw_loading_screen(display: Display, message: str) -> None:
+    display.screen.fill(config.BACKGROUND)
+    text = display.font.render(message, True, config.WHITE)
+    text_rect = text.get_rect(center=(display.screen.get_width() / 2, display.screen.get_height() / 2))
+    display.screen.blit(text, text_rect)
+    pygame.display.update()
