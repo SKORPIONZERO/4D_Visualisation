@@ -1,2 +1,7 @@
 # Byte-compiled / cache
 __pycache__/
+ 
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
