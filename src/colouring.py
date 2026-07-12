@@ -17,7 +17,7 @@ def lerp_colours_rgb(value: float, max_value: float, min_value: float = None) ->
     R2, G2, B2 = config.RED
     if min_value is None:
         min_value = -max_value
-    # Normalize v to a value between 0 and 1
+    # Normalize value to a value between 0 and 1
     normalized_v = (value - min_value) / (max_value - min_value)
     # Map normalized_v to a color gradient between 2 colors, e.g., from blue to red.
     R_t = int(R1 + (R2 - R1) * normalized_v)

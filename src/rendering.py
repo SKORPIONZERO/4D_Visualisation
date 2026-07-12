@@ -128,6 +128,5 @@ def draw_fps(display: Display) -> None:
 def draw_loading_screen(display: Display, message: str) -> None:
     display.screen.fill(config.BACKGROUND)
     text = display.font.render(message, True, config.WHITE)
-    text_rect = text.get_rect(center=(display.screen.get_width() / 2, display.screen.get_height() / 2))
-    display.screen.blit(text, text_rect)
+    display.screen.blit(text, (display.screen.get_width() / 2 - text.get_width() / 2, display.screen.get_height() / 2 - text.get_height() / 2))
     pygame.display.update()

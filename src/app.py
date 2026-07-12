@@ -105,12 +105,12 @@ class App:
 
     def render(self) -> None:
         rendering.draw_polytope(self.display, self.polytope)
+        rendering.draw_colour_legend(self.display, self.polytope)
+        rendering.draw_rotation_planes_text(self.display, self.angles, self.chosen_plane, self.order_rotation_applied)
         if self.display.w_values_enabled:
             rendering.draw_w_labels(self.display, self.polytope)
         if self.display.helper_legend_enabled:
             rendering.draw_helper_legend(self.display)
-        rendering.draw_colour_legend(self.display, self.polytope)
-        rendering.draw_rotation_planes_text(self.display, self.angles, self.chosen_plane, self.order_rotation_applied)
         if self.display.fps_display_enabled:
             rendering.draw_fps(self.display)
         pygame.display.update()
