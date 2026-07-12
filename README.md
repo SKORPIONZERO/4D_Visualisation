@@ -73,22 +73,45 @@ Every vertex and edge is colored based on its w-coordinate (the 4th dimension), 
 | Tab | Toggle RGB / HSV color mode |
 
 ## Requirements
-
+ 
 - Python 3
 - `pygame`
 - `numpy`
+- `pyinstaller` (only needed if building a standalone executable)
 
 Install dependencies:
 ```bash
-pip install pygame numpy
+pip install -r Requirements.txt
 ```
-
+ 
 ## Running
-
+ 
 ```bash
 cd src
 python main.py
 ```
+ 
+## Building a Standalone Executable
+ 
+A Windows standalone executable can be built using PyInstaller via the provided `build.bat` script and `4D-Object-Rotation.spec` file.
+ 
+Run from the project root (where `Requirements.txt` lives):
+ 
+```bash
+build.bat
+```
+ 
+This will:
+1. Install all dependencies from `Requirements.txt` (including PyInstaller).
+2. Build a single-file, windowed executable named `4D-Object-Rotation.exe` using `src/main.py` as the entry point.
+3. Output the executable to the `dist/` folder.
+The build configuration itself lives in `4D-Object-Rotation.spec`, which PyInstaller uses to determine the entry script, packaging options (`--onefile`, `--windowed`), and output name. You can also invoke it directly with:
+ 
+```bash
+pyinstaller 4D-Object-Rotation.spec
+```
+ 
+Build artifacts (`build/`, `dist/`, `*.spec` outputs) are excluded from version control via `.gitignore`.
 
 ## Project Structure
 
