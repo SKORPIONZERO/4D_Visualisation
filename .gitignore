@@ -5,3 +5,7 @@ __pycache__/
 build/
 dist/
 *.spec
+
+# Environment specific settings
+.venv/
+.vscode/
