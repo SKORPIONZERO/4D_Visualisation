@@ -9,6 +9,8 @@ import math
 
 import config
 
+AXES = {axis: index for index, axis in enumerate("xyzw")}
+
 def _create_rotation_matrix(plane: str, angle: float) -> np.ndarray:
     c, s = math.cos(angle), math.sin(angle)
     matrix = np.identity(4)

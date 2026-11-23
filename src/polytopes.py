@@ -29,8 +29,8 @@ class Polytope(ABC):
         self.vertices = self._generate_vertices()
         self.edges = self._generate_edges()
         self.bound = self._calculate_bound()
-        self.projected_vertices = None  # Will be set after projection
-        self.w_values = None  # Will be set after projection
+        self.projected_vertices = list(list(0 for _ in range(4)) for _ in range(len(self.vertices)))  # Will be set after projection
+        self.w_values = list(self.vertices[_][3] for _ in range(len(self.vertices)))  # Will be set after projection
 
     @abstractmethod
     def _generate_vertices(self) -> np.ndarray:
@@ -124,7 +124,7 @@ class Hexadecachoron_16_Cell(Polytope):
         vertices = []
         for axis in range(4):
             for sign in [-self.unit_distance, self.unit_distance]:
-                vertex = [0, 0, 0, 0]
+                vertex = list(0.0 for _ in range(4))
                 vertex[axis] = sign
                 vertices.append(vertex)
         return np.array(vertices)
@@ -150,7 +150,7 @@ class Icositetrachoron_24_Cell(Polytope):
             for axis2 in range(axis1 + 1, 4):
                 for sign1 in [-self.unit_distance, self.unit_distance]:
                     for sign2 in [-self.unit_distance, self.unit_distance]:
-                        vertex = [0, 0, 0, 0]
+                        vertex = list(0.0 for _ in range(4))
                         vertex[axis1] = sign1
                         vertex[axis2] = sign2
                         vertices.append(vertex)

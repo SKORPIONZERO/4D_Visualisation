@@ -111,7 +111,7 @@ def draw_colour_legend(display: Display, polytope: polytopes.Polytope) -> None:
     display.screen.blit(min_text, (legend_x - min_text.get_width() / 2, legend_y + 20))
     display.screen.blit(max_text, (legend_x + legend_width - max_text.get_width() / 2 - 5, legend_y + 20))
 
-def draw_rotation_planes_text(display: Display, angles: dict, chosen_plane: str, order_rotation_applied: tuple) -> None:
+def draw_rotation_planes_text(display: Display, angles: dict, chosen_plane: str, order_rotation_applied: list) -> None:
     for i, (plane, angle) in enumerate(reversed(angles.items())):
         text = display.font.render(f"{plane}: {angle:.2f} rad", True, config.WHITE)
         display.screen.blit(text, (10, display.screen.get_height() - 50 - i * 30))

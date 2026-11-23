@@ -119,7 +119,8 @@ Build artifacts (`build/`, `dist/`, `*.spec` outputs) are excluded from version 
 .
 ├── .gitignore
 ├── .vscode/
-│   └── launch.json
+│   ├── launch.json
+    └── settings.json
 ├── README.md
 ├── src/
 │   ├── main.py

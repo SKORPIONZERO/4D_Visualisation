@@ -111,9 +111,9 @@ def main():
         for i in current_vertices3:
             pygame.draw.circle(screen, GREEN, [int(i[0]), int(i[1])], 5)
         for j in edges:
-            pygame.draw.line(screen, NEON_BLUE, current_vertices1[j[0]][:2], current_vertices1[j[1]][:2], 3)
-            pygame.draw.line(screen, ORANGE, current_vertices2[j[0]][:2], current_vertices2[j[1]][:2], 3)
-            pygame.draw.line(screen, WHITE, current_vertices3[j[0]][:2], current_vertices3[j[1]][:2], 3)
+            pygame.draw.line(screen, NEON_BLUE, tuple(current_vertices1[j[0]][:2]), tuple(current_vertices1[j[1]][:2]), 3)
+            pygame.draw.line(screen, ORANGE, tuple(current_vertices2[j[0]][:2]), tuple(current_vertices2[j[1]][:2]), 3)
+            pygame.draw.line(screen, WHITE, tuple(current_vertices3[j[0]][:2]), tuple(current_vertices3[j[1]][:2]), 3)
         clock.tick(60)
         if theta_changing:
             theta = (theta + 0.01) % (2 * math.pi)

@@ -13,7 +13,7 @@ DISTANCE_3D = 4.0  # Distance from the 3D projection to the 3D camera
 UNIT_DISTANCE = 1.0  # Distance from the center to the vertices of the polytope
 OBJECT_SCALE = 200  # Scale factor for rendering the projected vertices
 NUMBER_OF_LINE_SEGMENTS = 10  # Number of line segments for rendering edges
-PLANES = ("xy", "xz", "xw", "yz", "yw", "zw")
+PLANES = ["xy", "xz", "xw", "yz", "yw", "zw"]
 PLANE_KEYS = {pygame.K_1 + i: plane for i, plane in enumerate(PLANES)}
 AXES = {"x": 0,
         "y": 1,
